@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <device id="retina6_3" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
@@ -13,18 +13,18 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="Vector" translatesAutoresizingMaskIntoConstraints="NO" id="WPZ-8D-xpD" userLabel="LaunchScreenImage">
-                                <rect key="frame" x="159" y="387" width="73" height="75.666666666666657"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="pR1-Is-1Yn">
+                                <rect key="frame" x="81" y="401" width="240" height="128"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black (iOS)"/>
                         <constraints>
-                            <constraint firstItem="WPZ-8D-xpD" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="cKA-Cn-Vk0"/>
-                            <constraint firstItem="WPZ-8D-xpD" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="i06-bW-6wJ"/>
+                            <constraint firstItem="pR1-Is-1Yn" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="E3g-GI-Vxb"/>
+                            <constraint firstItem="pR1-Is-1Yn" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="I66-Dn-Rsv"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -34,7 +34,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Vector" width="25" height="26"/>
+        <image name="logo" width="75" height="78"/>
         <namedColor name="YP Black (iOS)">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
