@@ -9,7 +9,7 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
   
-  @IBOutlet private var tableView: UITableView!
+  @IBOutlet private var tableView: UITableView?
   private let photosName: [String] = Array(0..<20).map{ "\($0)" }
   
   private lazy var dateFormatter: DateFormatter = {
@@ -22,8 +22,11 @@ final class ImagesListViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    tableView.rowHeight = 200
-    tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+    configTableView()
+  }
+  
+  private func configTableView() {
+    tableView?.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
   }
 }
 
@@ -51,15 +54,15 @@ extension ImagesListViewController {
     guard let image = UIImage(named: imageName) else {
       return
     }
-    cell.cellImage.image = image
+    cell.cellImage?.image = image
     
     if indexPath.row % 2 == 0 {
-      cell.likeButton.imageView?.image = UIImage(named: "Active")
+      cell.likeButton?.imageView?.image = UIImage(named: "Active")
     } else {
-      cell.likeButton.imageView?.image = UIImage(named: "No Active")
+      cell.likeButton?.imageView?.image = UIImage(named: "No Active")
     }
     
-    cell.dateLabel.text = dateFormatter.string(from: Date())
+    cell.dateLabel?.text = dateFormatter.string(from: Date())
     
   }
 }
@@ -75,7 +78,7 @@ extension ImagesListViewController: UITableViewDelegate {
     let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
     let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
     let imageWidth = image.size.width
-    let scale = imageViewWidth / imageWidth
+    let scale = imageWidth == 0 ? 0 : imageViewWidth / imageWidth
     let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
     return cellHeight
   }
