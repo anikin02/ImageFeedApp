@@ -56,14 +56,12 @@ extension ImagesListViewController {
     }
     cell.cellImage?.image = image
     
-    if indexPath.row % 2 == 0 {
-      cell.likeButton?.imageView?.image = UIImage(named: "Active")
-    } else {
-      cell.likeButton?.imageView?.image = UIImage(named: "No Active")
-    }
+    let isLiked = indexPath.row % 2 == 0
+    let likeImage = isLiked ? UIImage(named: "Active") : UIImage(named: "No Active")
+    
+    cell.likeButton?.setImage(likeImage, for: .normal)
     
     cell.dateLabel?.text = dateFormatter.string(from: Date())
-    
   }
 }
 
