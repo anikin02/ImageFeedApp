@@ -49,12 +49,11 @@ final class SingleImageViewController: UIViewController {
     guard let image, let imageView else { return }
     imageView.image = image
     imageView.frame.size = image.size
-    print(2)
   }
   
   private func rescaleAndCenterImageInScrollView(image: UIImage?) {
     guard let scrollView, let image else { return }
-    print(3)
+
     let minZoomScale = scrollView.minimumZoomScale
     let maxZoomScale = scrollView.maximumZoomScale
     view.layoutIfNeeded()
@@ -102,7 +101,7 @@ extension SingleImageViewController: UIScrollViewDelegate {
   
   private func configScrollView() {
     guard let scrollView else { return }
-    print(1)
+
     scrollView.minimumZoomScale = 0.1
     scrollView.maximumZoomScale = 1.25
   }
