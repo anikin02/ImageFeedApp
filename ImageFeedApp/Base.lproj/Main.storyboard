@@ -108,8 +108,8 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P7q-zJ-KFD">
                                 <rect key="frame" x="-20" y="-20" width="442" height="914"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="18" translatesAutoresizingMaskIntoConstraints="NO" id="LXn-K1-V3f">
-                                        <rect key="frame" x="20" y="20" width="402" height="874"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="LXn-K1-V3f">
+                                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
@@ -148,12 +148,12 @@
                         <color key="backgroundColor" name="YP Black (iOS)"/>
                         <constraints>
                             <constraint firstItem="yYo-Wz-6HF" firstAttribute="top" secondItem="IwH-eA-Xns" secondAttribute="top" constant="9" id="0aV-Jf-zWj"/>
-                            <constraint firstItem="IwH-eA-Xns" firstAttribute="top" secondItem="P7q-zJ-KFD" secondAttribute="top" id="Ds1-b4-20m"/>
-                            <constraint firstItem="IwH-eA-Xns" firstAttribute="leading" secondItem="P7q-zJ-KFD" secondAttribute="leading" id="KVV-k3-luG"/>
                             <constraint firstItem="yYo-Wz-6HF" firstAttribute="leading" secondItem="IwH-eA-Xns" secondAttribute="leading" constant="8" id="NdY-5f-dok"/>
-                            <constraint firstItem="P7q-zJ-KFD" firstAttribute="trailing" secondItem="IwH-eA-Xns" secondAttribute="trailing" id="VES-c5-H4y"/>
-                            <constraint firstItem="P7q-zJ-KFD" firstAttribute="bottom" secondItem="IwH-eA-Xns" secondAttribute="bottom" id="oHJ-dl-wlQ"/>
+                            <constraint firstItem="P7q-zJ-KFD" firstAttribute="bottom" secondItem="Siy-5n-dpr" secondAttribute="bottom" id="RzM-z2-2gK"/>
+                            <constraint firstItem="IwH-eA-Xns" firstAttribute="leading" secondItem="P7q-zJ-KFD" secondAttribute="leading" id="Zwg-ga-e2a"/>
+                            <constraint firstAttribute="top" secondItem="P7q-zJ-KFD" secondAttribute="top" id="mdC-rE-BaJ"/>
                             <constraint firstItem="IwH-eA-Xns" firstAttribute="bottom" secondItem="q8i-Pi-0Dw" secondAttribute="bottom" constant="17" id="sKk-7t-7M1"/>
+                            <constraint firstItem="P7q-zJ-KFD" firstAttribute="trailing" secondItem="IwH-eA-Xns" secondAttribute="trailing" id="tjR-dH-7JX"/>
                             <constraint firstItem="q8i-Pi-0Dw" firstAttribute="centerX" secondItem="IwH-eA-Xns" secondAttribute="centerX" id="tx7-Ji-sr6"/>
                         </constraints>
                     </view>
@@ -233,7 +233,6 @@
     </scenes>
     <resources>
         <image name="0" width="1600" height="1059"/>
-        <image name="18" width="854" height="1280"/>
         <image name="Active" width="44" height="44"/>
         <image name="Backward" width="24" height="24"/>
         <image name="Sharing" width="50" height="50"/>

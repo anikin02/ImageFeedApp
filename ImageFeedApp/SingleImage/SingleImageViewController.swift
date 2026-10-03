@@ -24,9 +24,10 @@ final class SingleImageViewController: UIViewController {
   // MARK: - Lyfecycle
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    configScrollView()
     configImageView()
     rescaleAndCenterImageInScrollView(image: image)
-    configScrollView()
   }
   
   // MARK: - Actions
@@ -48,11 +49,12 @@ final class SingleImageViewController: UIViewController {
     guard let image, let imageView else { return }
     imageView.image = image
     imageView.frame.size = image.size
+    print(2)
   }
   
   private func rescaleAndCenterImageInScrollView(image: UIImage?) {
     guard let scrollView, let image else { return }
-    
+    print(3)
     let minZoomScale = scrollView.minimumZoomScale
     let maxZoomScale = scrollView.maximumZoomScale
     view.layoutIfNeeded()
@@ -63,10 +65,29 @@ final class SingleImageViewController: UIViewController {
     let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
     scrollView.setZoomScale(scale, animated: false)
     scrollView.layoutIfNeeded()
-    let newContentSize = scrollView.contentSize
-    let x = (newContentSize.width - visibleRectSize.width) / 2
-    let y = (newContentSize.height - visibleRectSize.height) / 2
-    scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+    
+    centerImageInScrollView()
+  }
+  
+  private func centerImageInScrollView() {
+    guard let scrollView else { return }
+    
+    let verticalInset = max(
+      0,
+      (scrollView.bounds.height - scrollView.contentSize.height) / 2
+    )
+    
+    let horizontalInset = max(
+      0,
+      (scrollView.bounds.width - scrollView.contentSize.width) / 2
+    )
+    
+    scrollView.contentInset = UIEdgeInsets(
+      top: verticalInset,
+      left: horizontalInset,
+      bottom: verticalInset,
+      right: horizontalInset
+    )
   }
 }
 
@@ -76,24 +97,12 @@ extension SingleImageViewController: UIScrollViewDelegate {
   }
   
   func scrollViewDidZoom(_ scrollView: UIScrollView) {
-    guard let imageView = imageView else { return }
-    
-    let boundsSize = scrollView.bounds.size
-    let contentSize = scrollView.contentSize
-
-    let offsetX = contentSize.width < boundsSize.width ? (boundsSize.width - contentSize.width) / 2 : 0.0
-    
-    let offsetY = contentSize.height < boundsSize.height ? (boundsSize.height - contentSize.height) / 2 : 0.0
-    
-    imageView.center = CGPoint(
-      x: contentSize.width / 2 + offsetX,
-      y: contentSize.height / 2 + offsetY
-    )
+    centerImageInScrollView()
   }
   
   private func configScrollView() {
     guard let scrollView else { return }
-    
+    print(1)
     scrollView.minimumZoomScale = 0.1
     scrollView.maximumZoomScale = 1.25
   }
