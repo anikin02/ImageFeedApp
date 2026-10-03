@@ -8,6 +8,11 @@
 import UIKit
 
 final class SingleImageViewController: UIViewController {
+  // MARK: - Outlets
+  @IBOutlet weak private var scrollView: UIScrollView?
+  @IBOutlet weak private var imageView: UIImageView?
+  
+  // MARK: - Properties
   var image: UIImage? {
     didSet {
       guard isViewLoaded else { return }
@@ -16,9 +21,7 @@ final class SingleImageViewController: UIViewController {
     }
   }
   
-  @IBOutlet weak private var scrollView: UIScrollView?
-  @IBOutlet weak private var imageView: UIImageView?
-  
+  // MARK: - Lyfecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configImageView()
@@ -26,6 +29,7 @@ final class SingleImageViewController: UIViewController {
     configScrollView()
   }
   
+  // MARK: - Actions
   @IBAction private func didTapBackButton() {
     dismiss(animated: true, completion: nil)
   }
@@ -39,6 +43,7 @@ final class SingleImageViewController: UIViewController {
     self.present(activityVC, animated: true, completion: nil)
   }
   
+  // MARK: - Private Methods
   private func configImageView() {
     guard let image, let imageView else { return }
     imageView.image = image

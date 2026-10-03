@@ -7,16 +7,19 @@
 import UIKit
 
 final class ProfileViewController: UIViewController {
+  // MARK: - Properties
   private var profileImage: UIImageView = .init()
   private var nameLabel: UILabel = .init()
   private var loginLabel: UILabel = .init()
   private var descriptionLabel: UILabel = .init()
   private var exitButton: UIButton = .init()
   
+  // MARK: - Lyfecycle
   override func viewDidLoad() {
     configUI()
   }
   
+  // MARK: - Private Methods
   private func configUI() {
     configProfileImage()
     configNameLabel()

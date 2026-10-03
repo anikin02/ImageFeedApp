@@ -8,8 +8,10 @@
 import UIKit
 
 final class ImagesListViewController: UIViewController {
+  // MARK: - Outlets
   @IBOutlet private var tableView: UITableView?
   
+  // MARK: - Properties
   private let showSingleImageSegueIdentifier: String = "ShowSingleImage"
   private let photosName: [String] = Array(0..<20).map{ "\($0)" }
   private lazy var dateFormatter: DateFormatter = {
@@ -19,14 +21,11 @@ final class ImagesListViewController: UIViewController {
     return formatter
   }()
   
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
     configTableView()
-  }
-  
-  private func configTableView() {
-    tableView?.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -44,6 +43,11 @@ final class ImagesListViewController: UIViewController {
     } else {
       super.prepare(for: segue, sender: sender)
     }
+  }
+  
+  // MARK: - Private Methods
+  private func configTableView() {
+    tableView?.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
   }
 }
 
