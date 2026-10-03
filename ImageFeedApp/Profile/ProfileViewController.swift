@@ -16,6 +16,8 @@ final class ProfileViewController: UIViewController {
   
   // MARK: - Lyfecycle
   override func viewDidLoad() {
+    super.viewDidLoad()
+    
     configUI()
   }
   
