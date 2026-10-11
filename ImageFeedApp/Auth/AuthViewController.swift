@@ -8,30 +8,37 @@
 import UIKit
 
 final class AuthViewController: UIViewController {
-  private let showWeViewSegueIdentifier: String = "ShowWebView"
+  // MARK: - Properties
+  weak var delegate: AuthViewControllerDelegate?
+  
+  private let showWebViewSegueIdentifier: String = "ShowWebView"
   private let oauth2Service: OAuth2Service = OAuth2Service.shared
   private let storage: OAuth2TokenStorage = .init()
-  var delegate: AuthViewControllerDelegate?
   
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    configureBackButton()
   }
   
+  // MARK: - Navigation
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    if segue.identifier == showWeViewSegueIdentifier {
-      guard
-        let webViewViewController = segue.destination as? WebViewViewController
-      else {
-        assertionFailure("Invalid segue destination")
-        return
-      }
-      webViewViewController.delegate = self
-    } else {
+    guard segue.identifier == showWebViewSegueIdentifier else {
       super.prepare(for: segue, sender: sender)
+      return
     }
+    
+    guard let webViewViewController = segue.destination as? WebViewViewController else {
+      assertionFailure("Invalid segue destination")
+      return
+    }
+    
+    webViewViewController.delegate = self
+    
   }
   
+  // MARK: - Private Methods
   private func configureBackButton() {
     navigationController?.navigationBar.backIndicatorImage = UIImage(named: "Bakcward")
     navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "Bakcward")
@@ -40,6 +47,7 @@ final class AuthViewController: UIViewController {
   }
 }
 
+// MARK: - WebViewViewControllerDelegate
 extension AuthViewController: WebViewViewControllerDelegate {
   func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
     oauth2Service.fetchOAuthToken(code) { [weak self] result in
@@ -61,6 +69,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
   }
 }
 
+// MARK: - AuthViewControllerDelegate Protocol
 protocol AuthViewControllerDelegate: AnyObject {
   func didAuthenticate(_ vc: AuthViewController)
 }

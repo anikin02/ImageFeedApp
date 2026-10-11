@@ -9,6 +9,7 @@ import UIKit
 import WebKit
 
 final class WebViewViewController: UIViewController {
+  // MARK: - Properties
   @IBOutlet private weak var webView: WKWebView?
   @IBOutlet private weak var progressView: UIProgressView?
   
@@ -18,6 +19,7 @@ final class WebViewViewController: UIViewController {
   
   weak var delegate: WebViewViewControllerDelegate?
   
+  // MARK: - Lifecycle
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     webView?.addObserver(
@@ -43,10 +45,12 @@ final class WebViewViewController: UIViewController {
     webView?.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
   }
   
+  // MARK: - IBActions
   @IBAction private func didTapBackButton(_ sender: Any?) {
     delegate?.webViewViewControllerDidCancel(self)
   }
   
+  // MARK: - KVO
   override func observeValue(
     forKeyPath keyPath: String?,
     of object: Any?,
@@ -68,6 +72,7 @@ final class WebViewViewController: UIViewController {
     progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
+  // MARK: - Private Methods
   private func loadAuthView() {
     guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
       print("Failed to create URLComponents")
@@ -91,6 +96,7 @@ final class WebViewViewController: UIViewController {
   }
 }
 
+// MARK: - WKNavigationDelegate
 extension WebViewViewController: WKNavigationDelegate {
   func webView(
     _ webView: WKWebView,
