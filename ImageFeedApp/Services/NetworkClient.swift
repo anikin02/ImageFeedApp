@@ -7,14 +7,19 @@
 import Foundation
 
 protocol NetworkRouting {
+  var oldTask: URLSessionTask? { get set }
   func fetch(request: URLRequest, handler: @escaping (Result<Data, Error>) -> Void)
 }
 
-struct NetworkClient: NetworkRouting {
+final class NetworkClient: NetworkRouting {
+  var oldTask: URLSessionTask?
   private static let happyStatusCodes = 200..<300
   
   func fetch(request: URLRequest, handler: @escaping (Result<Data, Error>) -> Void) {
-    let task = URLSession.shared.dataTask(with: request) { data, response, error in
+    let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+      
+      self?.oldTask = nil
+      
       if let error {
         handler(.failure(error))
         return
@@ -30,9 +35,11 @@ struct NetworkClient: NetworkRouting {
         handler(.failure(NetworkError.noData))
         return
       }
+      
       handler(.success(data))
     }
     
+    oldTask = task
     task.resume()
   }
 }

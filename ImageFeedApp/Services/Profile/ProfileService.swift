@@ -1,0 +1,69 @@
+//
+//  ProfileService.swift
+//  ImageFeedApp
+//
+//  Created by Данил on 12/10/2026.
+//
+import Foundation
+
+final class ProfileService {
+  static let shared = ProfileService()
+  private(set) var profile: Profile?
+  
+  private var lastCode: String?
+  
+  private let urlTokenString: String = "https://unsplash.com/oauth/token"
+  private let networkClient: NetworkRouting
+  
+  private enum NetworkError: Error {
+    case badRequest
+    case tokenError
+  }
+  
+  private init(networkClient: NetworkRouting = NetworkClient() ) {
+    self.networkClient = networkClient
+  }
+  
+  func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+    assert(Thread.isMainThread)
+    if networkClient.oldTask != nil {
+      networkClient.oldTask?.cancel()
+    }
+    
+    guard let request = makeProfileRequest(token: token) else {
+      return completion(.failure(NetworkError.badRequest))
+    }
+    
+    networkClient.fetch(request: request) { result in
+      DispatchQueue.main.async {
+        self.lastCode = nil
+        switch result {
+          case .success(let data):
+            do {
+              let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
+              let profile = Profile(from: profileResult)
+              self.profile = profile
+              completion(.success(profile))
+            }
+            catch {
+              print(error.localizedDescription)
+              completion(.failure(error))
+            }
+          case .failure(let error):
+            print(error.localizedDescription)
+            completion(.failure(error))
+        }
+      }
+    }
+  }
+  
+  private func makeProfileRequest(token: String) -> URLRequest? {
+    guard let url = URL(string: "https://api.unsplash.com/me") else {
+      return nil
+    }
+    var request = URLRequest(url: url)
+    request.httpMethod = HTTPMethod.get.rawValue
+    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+    return request
+  }
+}
