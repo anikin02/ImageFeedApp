@@ -55,6 +55,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
       switch result {
         case .success(let token):
           storage.token = token
+          UIBlockingProgressHUD.show()
           delegate?.didAuthenticate(self)
         case .failure(let error):
           print(error.localizedDescription)
