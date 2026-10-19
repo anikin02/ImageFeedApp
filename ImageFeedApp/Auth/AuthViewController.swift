@@ -12,8 +12,10 @@ final class AuthViewController: UIViewController {
   weak var delegate: AuthViewControllerDelegate?
   
   private let showWebViewSegueIdentifier: String = "ShowWebView"
+  private let alertPresenter: AlertPresenter = .init()
   private let oauth2Service: OAuth2Service = OAuth2Service.shared
   private let storage: OAuth2TokenStorage = .init()
+  
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -45,6 +47,12 @@ final class AuthViewController: UIViewController {
     navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     navigationItem.backBarButtonItem?.tintColor = .ypBlackIOS
   }
+  
+  private func getAlertModel()-> AlertModel {
+    .init(title: "Что-то пошло не так(",
+          message: "Не удалось войти в систему",
+          buttonText: "ОК")
+  }
 }
 
 // MARK: - WebViewViewControllerDelegate
@@ -58,6 +66,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
           UIBlockingProgressHUD.show()
           delegate?.didAuthenticate(self)
         case .failure(let error):
+          alertPresenter.show(in: self, model: self.getAlertModel())
           print(error.localizedDescription)
       }
       
