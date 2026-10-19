@@ -45,19 +45,12 @@ final class OAuth2Service {
       return completion(.failure(NetworkError.badRequest))
     }
     
-    networkClient.fetch(request: request) { result in
+    networkClient.fetch(request: request) { (result: Result<OAuthTokenResponseBody, Error>) in
       DispatchQueue.main.async {
         self.lastCode = nil
         switch result {
-          case .success(let data):
-            do {
-              let token = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-              completion(.success(token.access_token))
-            }
-            catch {
-              print(error.localizedDescription)
-              completion(.failure(error))
-            }
+          case .success(let token):
+            completion(.success(token.access_token))
           case .failure(let error):
             print(error.localizedDescription)
             completion(.failure(error))

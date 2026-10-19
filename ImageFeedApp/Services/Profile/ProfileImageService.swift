@@ -12,7 +12,6 @@ final class ProfileImageService {
   
   private(set) var profileImage: ProfileImage?
   
-  private var lastCode: String?
   private let networkClient: NetworkRouting
   
   private let storage: OAuth2TokenStorage = .init()
@@ -41,25 +40,17 @@ final class ProfileImageService {
       return completion(.failure(NetworkError.badRequest))
     }
     
-    networkClient.fetch(request: request) { result in
+    networkClient.fetch(request: request) { (result: Result<UserResult, Error>) in
       DispatchQueue.main.async {
-        self.lastCode = nil
         switch result {
-          case .success(let data):
-            do {
-              let userResult = try JSONDecoder().decode(UserResult.self, from: data)
-              self.profileImage = userResult.profile_image
-              completion(.success(userResult.profile_image))
-              NotificationCenter.default
-                .post(
-                  name: ProfileImageService.didChangeNotification,
-                  object: self,
-                  userInfo: ["URL": userResult.profile_image.small])
-            }
-            catch {
-              print(error.localizedDescription)
-              completion(.failure(error))
-            }
+          case .success(let image):
+            self.profileImage = image.profile_image
+            completion(.success(image.profile_image))
+            NotificationCenter.default
+              .post(
+                name: ProfileImageService.didChangeNotification,
+                object: self,
+                userInfo: ["URL": image.profile_image.small])
           case .failure(let error):
             print(error.localizedDescription)
             completion(.failure(error))

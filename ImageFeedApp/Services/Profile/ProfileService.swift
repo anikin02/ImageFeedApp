@@ -34,21 +34,14 @@ final class ProfileService {
       return completion(.failure(NetworkError.badRequest))
     }
     
-    networkClient.fetch(request: request) { result in
+    networkClient.fetch(request: request) { (result: Result<ProfileResult, Error>) in
       DispatchQueue.main.async {
         self.lastCode = nil
         switch result {
-          case .success(let data):
-            do {
-              let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
-              let profile = Profile(from: profileResult)
-              self.profile = profile
-              completion(.success(profile))
-            }
-            catch {
-              print(error.localizedDescription)
-              completion(.failure(error))
-            }
+          case .success(let profileResult):
+            let profile = Profile(from: profileResult)
+            self.profile = profile
+            completion(.success(profile))
           case .failure(let error):
             print(error.localizedDescription)
             completion(.failure(error))
