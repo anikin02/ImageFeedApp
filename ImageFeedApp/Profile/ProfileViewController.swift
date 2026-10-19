@@ -50,6 +50,8 @@ final class ProfileViewController: UIViewController {
   }
   
   private func configUI(profile: Profile?) {
+    view.backgroundColor = .ypBlackIOS
+    
     guard let profile else { return }
     
     configProfileImage()
@@ -61,7 +63,6 @@ final class ProfileViewController: UIViewController {
   
   private func configProfileImage() {
     profileImage.translatesAutoresizingMaskIntoConstraints = false
-    profileImage.image = UIImage(named: "profile_pic")
     
     view.addSubview(profileImage)
     
@@ -71,6 +72,9 @@ final class ProfileViewController: UIViewController {
       profileImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32)
     ])
+    
+    profileImage.layer.cornerRadius = 35
+    profileImage.layer.masksToBounds = true
   }
   
   private func configNameLabel(with name: String) {
@@ -103,9 +107,9 @@ final class ProfileViewController: UIViewController {
     ])
   }
   
-  private func configDescriptionLabel(with bio: String) {
+  private func configDescriptionLabel(with bio: String?) {
     descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-    descriptionLabel.text = bio
+    descriptionLabel.text = bio ?? "Отсутствует описание"
     descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
     descriptionLabel.textColor = .ypWhiteIOS
     
