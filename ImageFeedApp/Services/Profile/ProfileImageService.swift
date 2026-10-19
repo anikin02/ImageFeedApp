@@ -67,7 +67,6 @@ final class ProfileImageService {
     var request = URLRequest(url: url)
     request.httpMethod = HTTPMethod.get.rawValue
     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-    print(request)
     return request
   }
 }
