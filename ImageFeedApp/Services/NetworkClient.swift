@@ -40,17 +40,22 @@ final class NetworkClient: NetworkRouting {
       self?.oldTask = nil
       
       if let error {
+        print("[dataTask]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
         handler(.failure(error))
         return
       }
       
       if let response = response as? HTTPURLResponse,
          !Self.happyStatusCodes.contains(response.statusCode) {
-        handler(.failure(NetworkError.codeError))
+        let error = NetworkError.codeError(response.statusCode)
+        print("[dataTask]: NetworkError - код ошибки \(response.statusCode)")
+        handler(.failure(error))
         return
       }
       
       guard let data else {
+        let error = NetworkError.noData
+        print("[loadAuthView]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
         handler(.failure(NetworkError.noData))
         return
       }
@@ -63,7 +68,19 @@ final class NetworkClient: NetworkRouting {
   }
 }
 
-enum NetworkError: Error {
-  case codeError
+enum NetworkError: Error, LocalizedError {
+  case codeError(Int)
   case noData
+  case invalidResponse
+
+  var errorDescription: String? {
+    switch self {
+    case .codeError(let statusCode):
+      return "код ошибки \(statusCode)"
+    case .noData:
+      return "ответ сервера не содержит данных"
+    case .invalidResponse:
+      return "ответ сервера не является HTTPURLResponse"
+    }
+  }
 }

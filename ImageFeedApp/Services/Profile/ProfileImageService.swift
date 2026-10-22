@@ -52,7 +52,7 @@ final class ProfileImageService {
                 object: self,
                 userInfo: ["URL": image.profile_image.small])
           case .failure(let error):
-            print(error.localizedDescription)
+            print("[ProfileImageService: fetchProfileImageURL]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
             completion(.failure(error))
         }
       }

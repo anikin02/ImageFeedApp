@@ -11,10 +11,6 @@ import UIKit
 final class UIBlockingProgressHUD {
   private static var window: UIWindow? {
     return UIApplication.shared.connectedScenes
-    //      .compactMap { $0 as? UIWindowScene }
-    //      .first { $0.activationState == .foregroundActive }?
-    //      .windows
-    //      .first { $0.isKeyWindow }
       .compactMap { $0 as? UIWindowScene }
       .flatMap { $0.windows }
       .first { $0.isKeyWindow }

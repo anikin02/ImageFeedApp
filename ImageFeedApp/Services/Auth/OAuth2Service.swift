@@ -29,11 +29,13 @@ final class OAuth2Service {
       if lastCode != code {
         networkClient.oldTask?.cancel()
       } else {
+        print("[fetchOAuthToken]: oldTask != nil, lastCode = code")
         completion(.failure(NetworkError.badRequest))
         return
       }
     } else {
       if lastCode == code {
+        print("[fetchOAuthToken]: lastCode = code")
         completion(.failure(NetworkError.badRequest))
         return
       }

@@ -43,7 +43,7 @@ final class ProfileService {
             self.profile = profile
             completion(.success(profile))
           case .failure(let error):
-            print(error.localizedDescription)
+            print("[ProfileService: fetchProfile]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
             completion(.failure(error))
         }
       }
