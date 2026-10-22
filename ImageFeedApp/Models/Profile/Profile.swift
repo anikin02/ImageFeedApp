@@ -14,7 +14,7 @@ struct Profile {
   init(from profileResult: ProfileResult) {
     self.loginName = "@\(profileResult.username)"
     self.username = profileResult.username
-    self.name = "\(profileResult.first_name) \(profileResult.last_name)"
+    self.name = "\(profileResult.firstName) \(profileResult.lastName)"
     self.bio = profileResult.bio
   }
 }
