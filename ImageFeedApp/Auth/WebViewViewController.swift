@@ -10,8 +10,8 @@ import WebKit
 
 final class WebViewViewController: UIViewController {
   // MARK: - Properties
-  @IBOutlet private weak var webView: WKWebView?
-  @IBOutlet private weak var progressView: UIProgressView?
+  private var webView: WKWebView = .init()
+  private var progressView: UIProgressView = .init()
   
   private var estimatedProgressObservation: NSKeyValueObservation?
   
@@ -25,7 +25,7 @@ final class WebViewViewController: UIViewController {
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     
-    estimatedProgressObservation = webView?.observe(
+    estimatedProgressObservation = webView.observe(
       \.estimatedProgress,
        options: [],
        changeHandler: { [weak self] _, _ in
@@ -39,28 +39,53 @@ final class WebViewViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    webView?.navigationDelegate = self
-    
+    webView.navigationDelegate = self
+    configUI()
     loadAuthView()
   }
   
-  // MARK: - IBActions
-  @IBAction private func didTapBackButton(_ sender: Any?) {
+  // MARK: - Private Methods
+  @objc private func didTapBackButton(_ sender: Any?) {
     delegate?.webViewViewControllerDidCancel(self)
   }
   
-  // MARK: - Private Methods
   private func updateProgress() {
-    guard let webView, let progressView else {
-      return
-    }
     progressView.progress = Float(webView.estimatedProgress)
     progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
+  private func configUI() {
+    configWebView()
+    configProgressView()
+  }
+  
+  private func configWebView() {
+    webView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(webView)
+    
+    NSLayoutConstraint.activate([
+      webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      webView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+      webView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+      webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+    ])
+  }
+  
+  private func configProgressView() {
+    progressView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(progressView)
+    
+    NSLayoutConstraint.activate([
+      progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+    ])
+  }
+  
   private func loadAuthView() {
     guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-      print("Failed to create URLComponents")
+      let error = URLError(.badURL)
+      print("[loadAuthView]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
       return
     }
     
@@ -72,12 +97,13 @@ final class WebViewViewController: UIViewController {
     ]
     
     guard let url = urlComponents.url else {
-      print("Failed to create URL")
+      let error = URLError(.badURL)
+      print("[loadAuthView]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
       return
     }
     
     let request = URLRequest(url: url)
-    webView?.load(request)
+    webView.load(request)
   }
 }
 

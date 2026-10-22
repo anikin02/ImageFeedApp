@@ -17,11 +17,18 @@ final class SplashViewController: UIViewController {
   // MARK: - Lifecycle
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
+    storage.token = nil
+    guard let _ = storage.token else {
+      presentAuthViewController()
+      return
+    }
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
     configUI()
     
     guard let token = storage.token else {
-      presentAuthViewController()
       return
     }
     
@@ -55,21 +62,23 @@ final class SplashViewController: UIViewController {
       .flatMap { $0.windows }
       .first { $0.isKeyWindow }
     
-    let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-      .instantiateViewController(withIdentifier: "TabBarViewController")
+    let tabBarController = TabBarController()
     
     window?.rootViewController = tabBarController
   }
   
   private func presentAuthViewController() {
-    let storyboard = UIStoryboard(name: "Main", bundle: .main)
-    guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
-      assertionFailure("Не удалось найти AuthViewController по идентификатору")
-      return
-    }
-    authViewController.delegate = self
-    authViewController.modalPresentationStyle = .fullScreen
-    present(authViewController, animated: true)
+    
+    let authVC = AuthViewController()
+    authVC.delegate = self
+    
+    let navigationController = UINavigationController(
+      rootViewController: authVC
+    )
+    
+    navigationController.modalPresentationStyle = .fullScreen
+    
+    present(navigationController, animated: true)
   }
   
   private func fetchProfile(token: String) {
@@ -81,12 +90,16 @@ final class SplashViewController: UIViewController {
       
       switch result {
         case let .success(profile):
-          profileImageService.fetchProfileImageURL(profile.username) { _ in }
+          profileImageService.fetchProfileImageURL(profile.username) { result in
+            if case .failure(let error) = result {
+              print("[fetchProfileImageURL]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
+            }
+          }
           
           self.switchToTabBarController()
           
-        case .failure:
-          break
+        case .failure(let error):
+          print("[fetchProfile]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
       }
     }
   }
@@ -97,12 +110,11 @@ extension SplashViewController: AuthViewControllerDelegate {
   func didAuthenticate(_ vc: AuthViewController) {
     vc.dismiss(animated: true) {
       UIBlockingProgressHUD.dismiss()
+      guard let token = self.storage.token else {
+        return
+      }
+      
+      self.fetchProfile(token: token)
     }
-    
-    guard let token = storage.token else {
-      return
-    }
-    
-    fetchProfile(token: token)
   }
 }
