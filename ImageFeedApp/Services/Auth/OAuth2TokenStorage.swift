@@ -21,6 +21,8 @@ extension OAuth2TokenStorage {
     set {
       if let newValue {
         storage.set(newValue, forKey: tokenKey)
+      } else {
+        storage.removeObject(forKey: tokenKey)
       }
     }
   }
