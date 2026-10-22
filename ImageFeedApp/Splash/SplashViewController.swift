@@ -17,7 +17,7 @@ final class SplashViewController: UIViewController {
   // MARK: - Lifecycle
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    storage.token = nil
+
     guard let _ = storage.token else {
       presentAuthViewController()
       return
