@@ -55,6 +55,7 @@ final class WebViewViewController: UIViewController {
   }
   
   private func configUI() {
+    view.backgroundColor = .ypWhiteIOS
     configWebView()
     configProgressView()
   }
@@ -73,6 +74,7 @@ final class WebViewViewController: UIViewController {
   
   private func configProgressView() {
     progressView.translatesAutoresizingMaskIntoConstraints = false
+    progressView.progressTintColor = .ypBlackIOS
     view.addSubview(progressView)
     
     NSLayoutConstraint.activate([
