@@ -5,6 +5,7 @@
 //  Created by Данил on 02/10/2026.
 //
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
   // MARK: - Properties
@@ -14,25 +15,54 @@ final class ProfileViewController: UIViewController {
   private var descriptionLabel: UILabel = .init()
   private var exitButton: UIButton = .init()
   
+  private var profileImageServiceObserver: NSObjectProtocol?
+  
+  private let profileService: ProfileService = .shared
+  
   // MARK: - Lyfecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    configUI()
+    configUI(profile: profileService.profile)
+    
+    profileImageServiceObserver = NotificationCenter.default
+      .addObserver(
+        forName: ProfileImageService.didChangeNotification,
+        object: nil,
+        queue: .main
+      ) { [weak self] _ in
+        guard let self = self else { return }
+        self.updateProfileImage()
+      }
+    
+    updateProfileImage()
   }
   
   // MARK: - Private Methods
-  private func configUI() {
+  private func updateProfileImage() {
+    guard
+      let profileImageURL = ProfileImageService.shared.profileImage?.small,
+      let url = URL(string: profileImageURL)
+    else {
+      return }
+
+    profileImage.kf.setImage(with: url)
+  }
+  
+  private func configUI(profile: Profile?) {
+    view.backgroundColor = .ypBlackIOS
+    
+    guard let profile else { return }
+    
     configProfileImage()
-    configNameLabel()
-    configLoginLabel()
-    configDescriptionLabel()
+    configNameLabel(with: profile.name)
+    configLoginLabel(with: profile.loginName)
+    configDescriptionLabel(with: profile.bio)
     configExitButton()
   }
   
   private func configProfileImage() {
     profileImage.translatesAutoresizingMaskIntoConstraints = false
-    profileImage.image = UIImage(named: "profile_pic")
     
     view.addSubview(profileImage)
     
@@ -42,11 +72,14 @@ final class ProfileViewController: UIViewController {
       profileImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32)
     ])
+    
+    profileImage.layer.cornerRadius = 35
+    profileImage.layer.masksToBounds = true
   }
   
-  private func configNameLabel() {
+  private func configNameLabel(with name: String) {
     nameLabel.translatesAutoresizingMaskIntoConstraints = false
-    nameLabel.text = "Екатерина Новикова"
+    nameLabel.text = name
     nameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
     nameLabel.textColor = .ypWhiteIOS
     
@@ -59,9 +92,9 @@ final class ProfileViewController: UIViewController {
     ])
   }
   
-  private func configLoginLabel() {
+  private func configLoginLabel(with login: String) {
     loginLabel.translatesAutoresizingMaskIntoConstraints = false
-    loginLabel.text = "@ekaterina_nov"
+    loginLabel.text = login
     loginLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
     loginLabel.textColor = .ypGrayIOS
     
@@ -74,9 +107,9 @@ final class ProfileViewController: UIViewController {
     ])
   }
   
-  private func configDescriptionLabel() {
+  private func configDescriptionLabel(with bio: String?) {
     descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-    descriptionLabel.text = "Hello, world!"
+    descriptionLabel.text = bio ?? "Отсутствует описание"
     descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
     descriptionLabel.textColor = .ypWhiteIOS
     

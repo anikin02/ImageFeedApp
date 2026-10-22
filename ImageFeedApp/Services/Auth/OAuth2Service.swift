@@ -9,6 +9,8 @@ import Foundation
 final class OAuth2Service {
   static let shared = OAuth2Service()
   
+  private var lastCode: String?
+  
   private let urlTokenString: String = "https://unsplash.com/oauth/token"
   private let networkClient: NetworkRouting
   
@@ -22,22 +24,35 @@ final class OAuth2Service {
   }
   
   func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
+    assert(Thread.isMainThread)
+    if networkClient.oldTask != nil {
+      if lastCode != code {
+        networkClient.oldTask?.cancel()
+      } else {
+        print("[fetchOAuthToken]: oldTask != nil, lastCode = code")
+        completion(.failure(NetworkError.badRequest))
+        return
+      }
+    } else {
+      if lastCode == code {
+        print("[fetchOAuthToken]: lastCode = code")
+        completion(.failure(NetworkError.badRequest))
+        return
+      }
+    }
+    
+    lastCode = code
+    
     guard let request = makeOAuthTokenRequest(code: code) else {
       return completion(.failure(NetworkError.badRequest))
     }
     
-    networkClient.fetch(request: request) { result in
+    networkClient.fetch(request: request) { (result: Result<OAuthTokenResponseBody, Error>) in
       DispatchQueue.main.async {
+        self.lastCode = nil
         switch result {
-          case .success(let data):
-            do {
-              let token = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-              completion(.success(token.access_token))
-            }
-            catch {
-              print(error.localizedDescription)
-              completion(.failure(error))
-            }
+          case .success(let token):
+            completion(.success(token.access_token))
           case .failure(let error):
             print(error.localizedDescription)
             completion(.failure(error))
@@ -47,8 +62,10 @@ final class OAuth2Service {
   }
   
   private func makeOAuthTokenRequest(code: String) -> URLRequest? {
-    guard var urlComponents = URLComponents(string: urlTokenString) else {
-      print("Failed to create URLComponents")
+    guard
+      var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")
+    else {
+      assertionFailure("Failed to create URL")
       return nil
     }
     
@@ -61,12 +78,11 @@ final class OAuth2Service {
     ]
     
     guard let authTokenUrl = urlComponents.url else {
-      print("Failed to create URL")
       return nil
     }
     
     var request = URLRequest(url: authTokenUrl)
-    request.httpMethod = "POST"
+    request.httpMethod = HTTPMethod.post.rawValue
     return request
   }
 }

@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
-  private let storage: UserDefaults = .standard
   private let tokenKey: String = "token"
+  private let storage: KeychainWrapper = KeychainWrapper.standard
 }
 
 extension OAuth2TokenStorage {
@@ -18,7 +19,11 @@ extension OAuth2TokenStorage {
       storage.string(forKey: tokenKey)
     }
     set {
-      storage.set(newValue, forKey: tokenKey)
+      if let newValue {
+        storage.set(newValue, forKey: tokenKey)
+      } else {
+        storage.removeObject(forKey: tokenKey)
+      }
     }
   }
 }
