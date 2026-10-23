@@ -20,6 +20,7 @@ final class NetworkClient: NetworkRouting {
       switch result {
         case .success(let data):
           do {
+            self.oldTask = nil
             let result = try JSONDecoder().decode(T.self, from: data)
             completion(.success(result))
           }
