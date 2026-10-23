@@ -13,7 +13,7 @@ struct ProfileResult: Codable {
   
   enum CodingKeys: String, CodingKey {
     case username
-    case firstName = "first_name" // Связываем свойство Swift с ключом из JSON
+    case firstName = "first_name"
     case lastName = "last_name"
     case bio
   }
