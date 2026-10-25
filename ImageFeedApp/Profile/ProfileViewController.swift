@@ -19,6 +19,7 @@ final class ProfileViewController: UIViewController {
   
   private let profileService: ProfileService = .shared
   private let logoutService: ProfileLogoutService = .shared
+  private var alertPresenter: AlertPresenter = .init()
   
   // MARK: - Lyfecycle
   override func viewDidLoad() {
@@ -138,6 +139,18 @@ final class ProfileViewController: UIViewController {
   }
   
   @objc private func didTapExitButton() {
+    showAlertExitWarning()
+  }
+  
+  private func showAlertExitWarning() {
+    let alertModel = AlertModel(title: "Пока, пока!",
+                                message: "Уверены, что хотите выйти?",
+                                buttons: [AlertButtonConfig(title: "Да", handler: logout),
+                                          AlertButtonConfig(title: "Нет", handler: nil)])
+    alertPresenter.show(in: self, model: alertModel)
+  }
+  
+  private func logout() {
     logoutService.logout()
     switchToSplashViewController()
   }
