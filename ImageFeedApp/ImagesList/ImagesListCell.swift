@@ -54,8 +54,8 @@ final class ImagesListCell: UITableViewCell {
     photoUrl = stringUrl
     cellImage.kf.indicatorType = .activity
     let placeholder = UIImage(named: "Stub")
+    cellImage.contentMode = .scaleAspectFill
     cellImage.tintColor = .ypWhiteAlpha50IOS
-    cellImage.contentMode = .center
     cellImage.kf.setImage(with: URL(string: stringUrl), placeholder: placeholder) { [weak self] result in
       if case .success = result {
         self?.onImageLoadSuccess?()
