@@ -63,11 +63,16 @@ final class SingleImageViewController: UIViewController {
     guard let stringUrlImage else { return }
     
     UIBlockingProgressHUD.show()
-    imageView.kf.setImage(with: URL(string: stringUrlImage)) { [weak self] result in
+    let placeholder = UIImage(named: "Stub")
+    imageView.contentMode = .scaleAspectFill
+    imageView.tintColor = .ypWhiteAlpha50IOS
+    imageView.kf.setImage(with: URL(string: stringUrlImage), placeholder: placeholder) { [weak self] result in
       guard let self = self else { return }
       switch result {
         case .success(let image):
           UIBlockingProgressHUD.dismiss()
+          imageView.contentMode = .scaleAspectFit
+          imageView.tintColor = nil
           imageView.frame = CGRect(origin: .zero, size: image.image.size)
           imageView.contentMode = .scaleAspectFit
           scrollView.contentSize = imageView.bounds.size
