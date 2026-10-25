@@ -77,6 +77,7 @@ final class ImagesListViewController: UIViewController {
   }
 }
 
+// MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return service.photos.count
@@ -107,6 +108,7 @@ extension ImagesListViewController: UITableViewDataSource {
   }
 }
 
+// MARK: - UITableViewDelegate
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
       let singleImageVC = SingleImageViewController()
@@ -136,6 +138,8 @@ extension ImagesListViewController: UITableViewDelegate {
   }
 }
 
+
+// MARK: - ImagesListCellDelegate
 extension ImagesListViewController: ImagesListCellDelegate {
   func imageListCellDidTapLike(_ cell: ImagesListCell) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
