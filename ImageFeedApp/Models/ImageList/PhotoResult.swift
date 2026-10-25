@@ -30,3 +30,7 @@ struct UrlsResult: Codable {
   let thumb: String
   let full: String
 }
+
+struct LikeResponseResult: Codable {
+  let photo: PhotoResult
+}

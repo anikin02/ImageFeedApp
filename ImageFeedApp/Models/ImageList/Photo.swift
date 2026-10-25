@@ -29,4 +29,14 @@ struct Photo {
       self.createdAt = nil
     }
   }
+  
+  init (oldPhoto: Photo) {
+    self.id = oldPhoto.id
+    self.size = oldPhoto.size
+    self.createdAt = oldPhoto.createdAt
+    self.welcomeDescription = oldPhoto.welcomeDescription
+    self.thumbImageURL = oldPhoto.thumbImageURL
+    self.largeImageURL = oldPhoto.largeImageURL
+    self.isLiked = !oldPhoto.isLiked
+  }
 }
