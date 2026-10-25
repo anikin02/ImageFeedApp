@@ -14,7 +14,7 @@ final class ProfileImageService {
   
   private let networkClient: NetworkRouting
   
-  private let storage: OAuth2TokenStorage = .init()
+  private let storage: OAuth2TokenStorage = .shared
   
   private enum NetworkError: Error {
     case badRequest
@@ -23,6 +23,10 @@ final class ProfileImageService {
   
   private init(networkClient: NetworkRouting = NetworkClient() ) {
     self.networkClient = networkClient
+  }
+  
+  func logout() {
+    profileImage = nil
   }
   
   func fetchProfileImageURL(_ username: String, completion: @escaping (Result<ProfileImage, Error>) -> Void) {
