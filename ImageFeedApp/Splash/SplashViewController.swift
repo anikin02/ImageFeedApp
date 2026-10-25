@@ -9,7 +9,7 @@ import UIKit
 
 final class SplashViewController: UIViewController {
   // MARK: - Properties
-  private let storage = OAuth2TokenStorage()
+  private let storage: OAuth2TokenStorage = .shared
   private let profileService: ProfileService = .shared
   private let profileImageService: ProfileImageService = .shared
   private var logoImage: UIImageView = .init()
