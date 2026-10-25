@@ -13,9 +13,8 @@ final class AuthViewController: UIViewController {
   
   private let showWebViewSegueIdentifier: String = "ShowWebView"
   private let alertPresenter: AlertPresenter = .init()
-  private let oauth2Service: OAuth2Service = OAuth2Service.shared
-  private let storage: OAuth2TokenStorage = .init()
-  
+  private let oauth2Service: OAuth2Service = .shared
+  private let storage: OAuth2TokenStorage = .shared
   private let loginButton: UIButton = .init()
   private let logoImageView: UIImageView = .init()
   
@@ -86,12 +85,6 @@ final class AuthViewController: UIViewController {
     navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     navigationItem.backBarButtonItem?.tintColor = .ypBlackIOS
   }
-  
-  private func getAlertModel()-> AlertModel {
-    .init(title: "Что-то пошло не так(",
-          message: "Не удалось войти в систему",
-          buttonText: "ОК")
-  }
 }
 
 // MARK: - WebViewViewControllerDelegate
@@ -113,7 +106,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
           
         case .failure(let error):
           print("[webViewViewController(_:didAuthenticateWithCode:)]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
-          self.alertPresenter.show(in: self, model: self.getAlertModel())
+          self.alertPresenter.show(in: self, model: AlertModel.getSimpleErrorAlertModel())
       }
     }
   }
