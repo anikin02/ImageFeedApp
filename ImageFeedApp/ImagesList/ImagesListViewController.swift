@@ -10,11 +10,14 @@ import UIKit
 final class ImagesListViewController: UIViewController {
   // MARK: - Properties
   private var tableView: UITableView = .init()
-  private var photos: [Photo] = []
+  private var photos: [Photo] {
+    service.photos
+  }
+  private var displayedPhotosCount = 0
   private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateStyle = .long
-    formatter.timeStyle = .none
+    formatter.locale = Locale(identifier: "ru_RU")
+    formatter.dateFormat = "d MMMM yyyy"
     return formatter
   }()
   private let service: ImagesListService = .shared
@@ -63,15 +66,14 @@ final class ImagesListViewController: UIViewController {
   }
   
   private func updateTableViewAnimated() {
-    let oldCount = photos.count
     let newCount = service.photos.count
-    photos = service.photos
-    if oldCount != newCount {
+    if displayedPhotosCount != newCount {
       tableView.performBatchUpdates {
-        let indexPaths = (oldCount..<newCount).map { i in
+        let indexPaths = (displayedPhotosCount..<newCount).map { i in
           IndexPath(row: i, section: 0)
         }
         tableView.insertRows(at: indexPaths, with: .automatic)
+        displayedPhotosCount = newCount
       } completion: { _ in }
     }
   }
@@ -80,7 +82,7 @@ final class ImagesListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return service.photos.count
+    return photos.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -110,17 +112,17 @@ extension ImagesListViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension ImagesListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-      let singleImageVC = SingleImageViewController()
-      singleImageVC.stringUrlImage = photos[indexPath.row].largeImageURL
-      singleImageVC.hidesBottomBarWhenPushed = true
-  
-      let navController = UINavigationController(rootViewController: singleImageVC)
-      navController.modalPresentationStyle = .fullScreen
-      navController.setNavigationBarHidden(true, animated: false)
-  
-      present(navController, animated: true, completion: nil)
-    }
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let singleImageVC = SingleImageViewController()
+    singleImageVC.stringUrlImage = photos[indexPath.row].largeImageURL
+    singleImageVC.hidesBottomBarWhenPushed = true
+    
+    let navController = UINavigationController(rootViewController: singleImageVC)
+    navController.modalPresentationStyle = .fullScreen
+    navController.setNavigationBarHidden(true, animated: false)
+    
+    present(navController, animated: true, completion: nil)
+  }
   
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
@@ -146,10 +148,11 @@ extension ImagesListViewController: ImagesListCellDelegate {
     let photo = photos[indexPath.row]
     UIBlockingProgressHUD.show()
     
-    service.changeLike(photoId: photo.id, isLike: !photo.isLiked) { result in
+    service.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+      guard let self else { return }
+      
       switch result {
         case .success:
-          self.photos = self.service.photos
           cell.setIsLike(with: self.photos[indexPath.row].isLiked)
           UIBlockingProgressHUD.dismiss()
         case .failure(_):

@@ -31,8 +31,8 @@ final class ImagesListService {
       print("[ImagesListService: fetchPhotosNextPage]: запрос уже выполняется")
       return
     }
-    
-    guard let request = makeImagePageRequest(pageNumber: (lastLoadedPage ?? 0) + 1) else {
+    let nextPage = (lastLoadedPage ?? 0) + 1
+    guard let request = makeImagePageRequest(pageNumber: nextPage) else {
       print("[ImagesListService: fetchPhotosNextPage]: ошибка при создании request")
       return
     }
@@ -45,6 +45,7 @@ final class ImagesListService {
               let photo = Photo(result: item)
               self.photos.append(photo)
             }
+            self.lastLoadedPage = nextPage
             NotificationCenter.default
               .post(
                 name: ImagesListService.didChangeNotification,
@@ -59,6 +60,7 @@ final class ImagesListService {
   func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
     guard let request = makeChangeLikeRequest(photoId: photoId, isLike: isLike) else {
       print("[ImagesListService: changeLike]: ошибка при создании request")
+      completion(.failure(NetworkError.badRequest))
       return
     }
     
@@ -72,6 +74,7 @@ final class ImagesListService {
             completion(.success(()))
           case .failure(let error):
             print("[ImagesListService: changeLike]: \(String(describing: type(of: error))) - \(error.localizedDescription)")
+            completion(.failure(error))
         }
       }
     }
@@ -82,7 +85,6 @@ final class ImagesListService {
     guard let url = URL(string: "https://api.unsplash.com/photos?page=\(pageNumber)&per_page=10") else {
       return nil
     }
-    lastLoadedPage = pageNumber
     
     guard let token = storage.token else { return nil }
     
