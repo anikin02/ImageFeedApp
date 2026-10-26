@@ -5,9 +5,13 @@
 //  Created by Данил on 01/10/2026.
 //
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
   static let reuseIdentifier: String = "ImagesListCell"
+  var photoUrl: String?
+  var onImageLoadSuccess: (() -> Void)?
+  weak var delegate: ImagesListCellDelegate?
   
   private var cellImage: UIImageView = .init()
   private var dateLabel: UILabel = .init()
@@ -21,8 +25,9 @@ final class ImagesListCell: UITableViewCell {
     configUI()
   }
   
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+    nil
   }
   
   override func layoutSubviews() {
@@ -36,11 +41,35 @@ final class ImagesListCell: UITableViewCell {
     )
   }
   
-  func configure(image: UIImage, isLiked: Bool, date: String) {
-    cellImage.image = image
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    dateLabel.text = ""
+    likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+    cellImage.kf.cancelDownloadTask()
+    cellImage.image = nil
+    onImageLoadSuccess = nil
+  }
+  
+  func configCell(stringUrl: String, isLiked: Bool, date: String) {
+    photoUrl = stringUrl
+    cellImage.kf.indicatorType = .activity
+    let placeholder = UIImage(named: "Stub")
+    cellImage.contentMode = .scaleAspectFill
+    cellImage.tintColor = .ypWhiteAlpha50IOS
+    cellImage.kf.setImage(with: URL(string: stringUrl), placeholder: placeholder) { [weak self] result in
+      if case .success = result {
+        self?.onImageLoadSuccess?()
+        self?.cellImage.tintColor = nil
+        self?.cellImage.contentMode = .scaleAspectFit
+      }
+    }
+    setIsLike(with: isLiked)
+    dateLabel.text = date
+  }
+  
+  func setIsLike(with isLiked: Bool) {
     let likeImage = isLiked ? UIImage(named: "Active") : UIImage(named: "No Active")
     likeButton.setImage(likeImage, for: .normal)
-    dateLabel.text = date
   }
   
   private func configUI() {
@@ -81,6 +110,7 @@ final class ImagesListCell: UITableViewCell {
   
   private func configLikeButton() {
     likeButton.translatesAutoresizingMaskIntoConstraints = false
+    likeButton.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
     contentView.addSubview(likeButton)
     NSLayoutConstraint.activate([
       likeButton.widthAnchor.constraint(equalToConstant: 44),
@@ -88,6 +118,10 @@ final class ImagesListCell: UITableViewCell {
       likeButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor),
       likeButton.topAnchor.constraint(equalTo: cellImage.topAnchor)
     ])
+  }
+  
+  @objc private func didTapLikeButton() {
+    delegate?.imageListCellDidTapLike(self)
   }
   
   private func setupGradient() {

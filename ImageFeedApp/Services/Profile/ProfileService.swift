@@ -24,6 +24,11 @@ final class ProfileService {
     self.networkClient = networkClient
   }
   
+  func logout() {
+    profile = nil
+    lastCode = nil
+  }
+  
   func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
     assert(Thread.isMainThread)
     if networkClient.oldTask != nil {

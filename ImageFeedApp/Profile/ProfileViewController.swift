@@ -18,6 +18,8 @@ final class ProfileViewController: UIViewController {
   private var profileImageServiceObserver: NSObjectProtocol?
   
   private let profileService: ProfileService = .shared
+  private let logoutService: ProfileLogoutService = .shared
+  private var alertPresenter: AlertPresenter = .init()
   
   // MARK: - Lyfecycle
   override func viewDidLoad() {
@@ -45,7 +47,7 @@ final class ProfileViewController: UIViewController {
       let url = URL(string: profileImageURL)
     else {
       return }
-
+    
     profileImage.kf.setImage(with: url)
   }
   
@@ -125,7 +127,7 @@ final class ProfileViewController: UIViewController {
   private func configExitButton() {
     exitButton.translatesAutoresizingMaskIntoConstraints = false
     exitButton.setImage(UIImage(named: "Exit"), for: .normal)
-    
+    exitButton.addTarget(self, action: #selector(didTapExitButton), for: .touchUpInside)
     view.addSubview(exitButton)
     
     NSLayoutConstraint.activate([
@@ -134,5 +136,33 @@ final class ProfileViewController: UIViewController {
       exitButton.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor),
       exitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
     ])
+  }
+  
+  @objc private func didTapExitButton() {
+    showAlertExitWarning()
+  }
+  
+  private func showAlertExitWarning() {
+    let alertModel = AlertModel(title: "Пока, пока!",
+                                message: "Уверены, что хотите выйти?",
+                                buttons: [AlertButtonConfig(title: "Да", handler: logout),
+                                          AlertButtonConfig(title: "Нет", handler: nil)])
+    alertPresenter.show(in: self, model: alertModel)
+  }
+  
+  private func logout() {
+    logoutService.logout()
+    switchToSplashViewController()
+  }
+  
+  private func switchToSplashViewController() {
+    let window = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+      .first { $0.isKeyWindow }
+    
+    let splashVC = SplashViewController()
+    
+    window?.rootViewController = splashVC
   }
 }

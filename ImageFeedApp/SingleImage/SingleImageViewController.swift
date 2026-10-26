@@ -6,20 +6,21 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
   // MARK: - Properties
-  var image: UIImage? {
+  var stringUrlImage: String? {
     didSet {
       guard isViewLoaded else { return }
       updateImageView()
-      rescaleAndCenterImageInScrollView(image: image)
     }
   }
   private var scrollView: UIScrollView = .init()
   private var imageView: UIImageView = .init()
   private var shareButton: UIButton = .init()
   private var backButton: UIButton = .init()
+  private let alertPresenter: AlertPresenter = .init()
   
   // MARK: - Lyfecycle
   override func viewDidLoad() {
@@ -33,7 +34,7 @@ final class SingleImageViewController: UIViewController {
   }
   
   @objc private func didTapShareButton(_ sender: Any) {
-    guard let image else { return }
+    guard let image = imageView.image else { return }
     
     let objectsToShare: [Any] = [image]
     let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
@@ -47,7 +48,7 @@ final class SingleImageViewController: UIViewController {
     
     configScrollView()
     configImageView()
-    rescaleAndCenterImageInScrollView(image: image)
+    rescaleAndCenterImageInScrollView()
     
     configBackButton()
     configShareButton()
@@ -59,12 +60,36 @@ final class SingleImageViewController: UIViewController {
   }
   
   private func updateImageView() {
-    guard let image else { return }
+    guard let stringUrlImage else { return }
     
-    imageView.image = image
-    imageView.frame = CGRect(origin: .zero, size: image.size)
-    imageView.contentMode = .scaleAspectFit
-    scrollView.contentSize = imageView.bounds.size
+    UIBlockingProgressHUD.show()
+    let placeholder = UIImage(named: "Stub")
+    imageView.contentMode = .scaleAspectFill
+    imageView.tintColor = .ypWhiteAlpha50IOS
+    imageView.kf.setImage(with: URL(string: stringUrlImage), placeholder: placeholder) { [weak self] result in
+      guard let self = self else { return }
+      switch result {
+        case .success(let image):
+          UIBlockingProgressHUD.dismiss()
+          imageView.contentMode = .scaleAspectFit
+          imageView.tintColor = nil
+          imageView.frame = CGRect(origin: .zero, size: image.image.size)
+          imageView.contentMode = .scaleAspectFit
+          scrollView.contentSize = imageView.bounds.size
+          rescaleAndCenterImageInScrollView()
+        case .failure:
+          showError()
+          UIBlockingProgressHUD.dismiss()
+      }
+    }
+  }
+  
+  private func showError() {
+    let model = AlertModel(title: "Что-то пошло не так.",
+                           message: "Попробовать ещё раз?",
+                           buttons: [AlertButtonConfig(title: "Не надо", handler: nil),
+                                     AlertButtonConfig(title: "Повторить", handler: updateImageView),])
+    alertPresenter.show(in: self, model: model)
   }
   
   private func configScrollView() {
@@ -118,8 +143,8 @@ final class SingleImageViewController: UIViewController {
     ])
   }
   
-  private func rescaleAndCenterImageInScrollView(image: UIImage?) {
-    guard let image else { return }
+  private func rescaleAndCenterImageInScrollView() {
+    guard let image = imageView.image else { return }
     
     let minZoomScale = scrollView.minimumZoomScale
     let maxZoomScale = scrollView.maximumZoomScale
