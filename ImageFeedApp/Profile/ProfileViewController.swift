@@ -7,59 +7,74 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+protocol ProfileViewProtocol: AnyObject {
+  var presenter: ProfilePresenterProtocol? { get set }
+  
+  func showProfile(profile: Profile)
+  func showAvatar(url: URL)
+  func showAlertExitWarning()
+  func switchToSplashViewController()
+}
+
+final class ProfileViewController: UIViewController & ProfileViewProtocol {
   // MARK: - Properties
+  var presenter: ProfilePresenterProtocol?
+  
   private var profileImage: UIImageView = .init()
   private var nameLabel: UILabel = .init()
   private var loginLabel: UILabel = .init()
   private var descriptionLabel: UILabel = .init()
   private var exitButton: UIButton = .init()
   
-  private var profileImageServiceObserver: NSObjectProtocol?
-  
-  private let profileService: ProfileService = .shared
-  private let logoutService: ProfileLogoutService = .shared
   private var alertPresenter: AlertPresenter = .init()
   
   // MARK: - Lyfecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    configUI(profile: profileService.profile)
-    
-    profileImageServiceObserver = NotificationCenter.default
-      .addObserver(
-        forName: ProfileImageService.didChangeNotification,
-        object: nil,
-        queue: .main
-      ) { [weak self] _ in
-        guard let self = self else { return }
-        self.updateProfileImage()
-      }
-    
-    updateProfileImage()
+    configUI()
+    presenter?.viewDidLoad()
   }
   
-  // MARK: - Private Methods
-  private func updateProfileImage() {
-    guard
-      let profileImageURL = ProfileImageService.shared.profileImage?.small,
-      let url = URL(string: profileImageURL)
-    else {
-      return }
+  // MARK: - ProfileViewProtocol
+  func switchToSplashViewController() {
+    let window = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+      .first { $0.isKeyWindow }
     
+    let splashVC = SplashViewController()
+    
+    window?.rootViewController = splashVC
+  }
+  
+  func showAlertExitWarning() {
+    let alertModel = AlertModel(title: "Пока, пока!",
+                                message: "Уверены, что хотите выйти?",
+                                buttons: [AlertButtonConfig(title: "Да", handler: presenter?.didConfirmLogout),
+                                          AlertButtonConfig(title: "Нет", handler: nil)])
+    alertPresenter.show(in: self, model: alertModel)
+  }
+  
+  func showProfile(profile: Profile) {
+    nameLabel.text = profile.name
+    loginLabel.text = profile.loginName
+    descriptionLabel.text = profile.bio
+  }
+  
+  func showAvatar(url: URL) {
     profileImage.kf.setImage(with: url)
   }
   
-  private func configUI(profile: Profile?) {
+  // MARK: - Private Methods
+  
+  private func configUI() {
     view.backgroundColor = .ypBlackIOS
     
-    guard let profile else { return }
-    
     configProfileImage()
-    configNameLabel(with: profile.name)
-    configLoginLabel(with: profile.loginName)
-    configDescriptionLabel(with: profile.bio)
+    configNameLabel()
+    configLoginLabel()
+    configDescriptionLabel()
     configExitButton()
   }
   
@@ -79,9 +94,8 @@ final class ProfileViewController: UIViewController {
     profileImage.layer.masksToBounds = true
   }
   
-  private func configNameLabel(with name: String) {
+  private func configNameLabel() {
     nameLabel.translatesAutoresizingMaskIntoConstraints = false
-    nameLabel.text = name
     nameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
     nameLabel.textColor = .ypWhiteIOS
     
@@ -94,9 +108,8 @@ final class ProfileViewController: UIViewController {
     ])
   }
   
-  private func configLoginLabel(with login: String) {
+  private func configLoginLabel() {
     loginLabel.translatesAutoresizingMaskIntoConstraints = false
-    loginLabel.text = login
     loginLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
     loginLabel.textColor = .ypGrayIOS
     
@@ -109,9 +122,8 @@ final class ProfileViewController: UIViewController {
     ])
   }
   
-  private func configDescriptionLabel(with bio: String?) {
+  private func configDescriptionLabel() {
     descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-    descriptionLabel.text = bio ?? "Отсутствует описание"
     descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
     descriptionLabel.textColor = .ypWhiteIOS
     
@@ -139,30 +151,6 @@ final class ProfileViewController: UIViewController {
   }
   
   @objc private func didTapExitButton() {
-    showAlertExitWarning()
-  }
-  
-  private func showAlertExitWarning() {
-    let alertModel = AlertModel(title: "Пока, пока!",
-                                message: "Уверены, что хотите выйти?",
-                                buttons: [AlertButtonConfig(title: "Да", handler: logout),
-                                          AlertButtonConfig(title: "Нет", handler: nil)])
-    alertPresenter.show(in: self, model: alertModel)
-  }
-  
-  private func logout() {
-    logoutService.logout()
-    switchToSplashViewController()
-  }
-  
-  private func switchToSplashViewController() {
-    let window = UIApplication.shared.connectedScenes
-      .compactMap { $0 as? UIWindowScene }
-      .flatMap { $0.windows }
-      .first { $0.isKeyWindow }
-    
-    let splashVC = SplashViewController()
-    
-    window?.rootViewController = splashVC
+    presenter?.didTapExit()
   }
 }
