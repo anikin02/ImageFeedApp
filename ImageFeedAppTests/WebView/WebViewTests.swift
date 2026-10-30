@@ -1,17 +1,17 @@
 //
-//  ImageFeedAppTests.swift
-//  ImageFeedAppTests
+//  WebViewTests.swift
+//  ImageFeedApp
 //
-//  Created by Данил on 27/10/2026.
+//  Created by Данил on 30/10/2026.
 //
+
 @testable import ImageFeedApp
 import XCTest
 import Foundation
 
-final class ImageFeedAppTests: XCTestCase {
+final class WebViewTests: XCTestCase {
   
-  // MARK: - Tests for WebViewVC
-  func testViewControllerCallsViewDidLoad() {
+  func testWebViewControllerCallsViewDidLoad() {
     // given
     let viewController = WebViewViewController()
     let presenter = WebViewPresenterSpy()
@@ -25,7 +25,7 @@ final class ImageFeedAppTests: XCTestCase {
     XCTAssertTrue(presenter.viewDidLoadCalled)
   }
   
-  func testPresenterCallsLoadRequest() {
+  func testWebViewPresenterCallsLoadRequest() {
     //given
     let viewController = WebViewViewControllerSpy()
     let authHelper = AuthHelper()
