@@ -9,7 +9,6 @@ import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
   static let reuseIdentifier: String = "ImagesListCell"
-  var photoUrl: String?
   var onImageLoadSuccess: (() -> Void)?
   weak var delegate: ImagesListCellDelegate?
   
@@ -51,7 +50,6 @@ final class ImagesListCell: UITableViewCell {
   }
   
   func configCell(stringUrl: String, isLiked: Bool, date: String) {
-    photoUrl = stringUrl
     cellImage.kf.indicatorType = .activity
     let placeholder = UIImage(named: "Stub")
     cellImage.contentMode = .scaleAspectFill
