@@ -9,10 +9,9 @@ import Foundation
 
 protocol ImagesListPresenterProtocol: AnyObject {
   var view: ImagesListViewProtocol? { get set }
-  var photosCount: Int { get }
-  var dateFormatter: DateFormatter { get }
+  var displayedPhotosCount: Int { get }
   func viewDidLoad()
-  func cellViewModel(at indexPath: Int) -> Photo
+  func cellViewModel(at indexPath: Int) -> CellModel
   func heightForRow(at indexPath: Int, tableWidth: CGFloat) -> CGFloat
   func willDisplayRow(at indexPath: Int)
   func didSelectRow(at indexPath: Int)
@@ -20,10 +19,9 @@ protocol ImagesListPresenterProtocol: AnyObject {
 }
 
 final class ImagesListPresenter: ImagesListPresenterProtocol {
-  weak var view: (any ImagesListViewProtocol)?
-  var photosCount: Int { photos.count }
-  
-  lazy var dateFormatter: DateFormatter = {
+  weak var view: ImagesListViewProtocol?
+  var displayedPhotosCount = 0
+  private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ru_RU")
     formatter.dateFormat = "d MMMM yyyy"
@@ -32,7 +30,6 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
   private let service: ImagesListServiceProtocol
   private var photos: [Photo] { service.photos }
   private var imagesListServiceObserver: NSObjectProtocol?
-  private var displayedPhotosCount = 0
   
   init(service: ImagesListServiceProtocol = ImagesListService.shared) {
     self.service = service
@@ -50,8 +47,10 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     service.fetchPhotosNextPage()
   }
   
-  func cellViewModel(at indexPath: Int) -> Photo {
-    photos[indexPath]
+  func cellViewModel(at indexPath: Int) -> CellModel {
+    CellModel(stringUrl: photos[indexPath].thumbImageURL,
+              isLiked: photos[indexPath].isLiked,
+              stringDate: dateFormatter.string(from: photos[indexPath].createdAt ?? Date()))
   }
   
   func heightForRow(at indexPath: Int, tableWidth: CGFloat) -> CGFloat {

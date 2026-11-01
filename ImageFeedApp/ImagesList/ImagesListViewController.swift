@@ -94,7 +94,7 @@ final class ImagesListViewController: UIViewController & ImagesListViewProtocol 
 // MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    presenter?.photosCount ?? 0
+    presenter?.displayedPhotosCount ?? 0
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -111,9 +111,9 @@ extension ImagesListViewController: UITableViewDataSource {
     let photo = presenter.cellViewModel(at: indexPath.row)
     
     imageListCell.configCell(
-      stringUrl: photo.thumbImageURL,
+      stringUrl: photo.stringUrl,
       isLiked: photo.isLiked,
-      date: presenter.dateFormatter.string(from: photo.createdAt ?? Date())
+      date: photo.stringDate
     )
     
     imageListCell.delegate = self
