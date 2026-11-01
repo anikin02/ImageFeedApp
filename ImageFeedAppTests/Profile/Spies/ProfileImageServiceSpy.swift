@@ -10,6 +10,7 @@ import Foundation
 
 final class ProfileImageServiceSpy: ProfileImageServiceProtocol {
   var profileImage: ProfileImage?
+  var fetchProfileImageURLCalled = false
   
   init() {
     self.profileImage = ProfileImage(small: "https://dzen.ru",
