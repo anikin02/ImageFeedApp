@@ -113,6 +113,7 @@ final class SingleImageViewController: UIViewController {
   }
   
   private func configBackButton() {
+    backButton.accessibilityIdentifier = "back button"
     backButton.translatesAutoresizingMaskIntoConstraints = false
     backButton.setImage(UIImage(named: "Backward"), for: .normal)
     backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
