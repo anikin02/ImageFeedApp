@@ -7,15 +7,13 @@
 import UIKit
 
 final class AlertPresenter {
-  private static let alertAccessibilityIdentifier = "Alert"
-  
   func show(in viewController: UIViewController, model: AlertModel) {
     let alert = UIAlertController(
       title: model.title,
       message: model.message,
       preferredStyle: .alert)
     
-    alert.view.accessibilityIdentifier = Self.alertAccessibilityIdentifier
+    alert.view.accessibilityIdentifier = AccessibilityIdentifiers.Alert.alert
     
     for button in model.buttons {
       let action = UIAlertAction(title: button.title, style: .default) { _ in

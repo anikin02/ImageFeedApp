@@ -73,15 +73,18 @@ enum NetworkError: Error, LocalizedError {
   case codeError(Int)
   case noData
   case invalidResponse
-
+  case badRequest
+  
   var errorDescription: String? {
     switch self {
-    case .codeError(let statusCode):
-      return "код ошибки \(statusCode)"
-    case .noData:
-      return "ответ сервера не содержит данных"
-    case .invalidResponse:
-      return "ответ сервера не является HTTPURLResponse"
+      case .codeError(let statusCode):
+        "код ошибки \(statusCode)"
+      case .noData:
+        "ответ сервера не содержит данных"
+      case .invalidResponse:
+        "ответ сервера не является HTTPURLResponse"
+      case .badRequest:
+        "некорректный запрос"
     }
   }
 }

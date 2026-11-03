@@ -6,7 +6,13 @@
 //
 import Foundation
 
-final class ProfileImageService {
+protocol ProfileImageServiceProtocol {
+  var profileImage: ProfileImage? { get }
+  func fetchProfileImageURL(_ username: String, completion: @escaping (Result<ProfileImage, Error>) -> Void)
+  func logout()
+}
+
+final class ProfileImageService: ProfileImageServiceProtocol {
   static let shared = ProfileImageService()
   static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
   

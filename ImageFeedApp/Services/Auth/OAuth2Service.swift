@@ -14,11 +14,6 @@ final class OAuth2Service {
   private let urlTokenString: String = "https://unsplash.com/oauth/token"
   private let networkClient: NetworkRouting
   
-  private enum NetworkError: Error {
-    case badRequest
-    case codeError
-  }
-  
   private init(networkClient: NetworkRouting = NetworkClient() ) {
     self.networkClient = networkClient
   }

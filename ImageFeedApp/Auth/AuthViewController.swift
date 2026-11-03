@@ -43,6 +43,7 @@ final class AuthViewController: UIViewController {
     loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
     
     loginButton.translatesAutoresizingMaskIntoConstraints = false
+    loginButton.accessibilityIdentifier = AccessibilityIdentifiers.Auth.loginButton
     
     view.addSubview(loginButton)
     
@@ -59,7 +60,11 @@ final class AuthViewController: UIViewController {
   
   @objc private func didTapLoginButton() {
     let webViewVC = WebViewViewController()
+    let authHelper = AuthHelper()
+    let webViewPresenter = WebViewPresenter(authHelper: authHelper)
     webViewVC.delegate = self
+    webViewVC.presenter = webViewPresenter
+    webViewPresenter.view = webViewVC
     
     navigationController?.pushViewController(webViewVC, animated: true)
   }

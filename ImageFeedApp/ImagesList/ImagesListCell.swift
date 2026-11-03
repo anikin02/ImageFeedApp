@@ -9,7 +9,6 @@ import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
   static let reuseIdentifier: String = "ImagesListCell"
-  var photoUrl: String?
   var onImageLoadSuccess: (() -> Void)?
   weak var delegate: ImagesListCellDelegate?
   
@@ -45,13 +44,13 @@ final class ImagesListCell: UITableViewCell {
     super.prepareForReuse()
     dateLabel.text = ""
     likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+    likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.noActiveLikeButton
     cellImage.kf.cancelDownloadTask()
     cellImage.image = nil
     onImageLoadSuccess = nil
   }
   
   func configCell(stringUrl: String, isLiked: Bool, date: String) {
-    photoUrl = stringUrl
     cellImage.kf.indicatorType = .activity
     let placeholder = UIImage(named: "Stub")
     cellImage.contentMode = .scaleAspectFill
@@ -69,6 +68,12 @@ final class ImagesListCell: UITableViewCell {
   
   func setIsLike(with isLiked: Bool) {
     let likeImage = isLiked ? UIImage(named: "Active") : UIImage(named: "No Active")
+    if isLiked {
+      likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.activeLikeButton
+    } else {
+      likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.noActiveLikeButton
+    }
+
     likeButton.setImage(likeImage, for: .normal)
   }
   
