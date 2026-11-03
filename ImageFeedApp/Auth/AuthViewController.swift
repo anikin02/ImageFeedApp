@@ -43,7 +43,7 @@ final class AuthViewController: UIViewController {
     loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
     
     loginButton.translatesAutoresizingMaskIntoConstraints = false
-    loginButton.accessibilityIdentifier = "Authenticate"
+    loginButton.accessibilityIdentifier = AccessibilityIdentifiers.Auth.loginButton
     
     view.addSubview(loginButton)
     

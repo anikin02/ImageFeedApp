@@ -95,7 +95,7 @@ final class ProfileViewController: UIViewController & ProfileViewProtocol {
   }
   
   private func configNameLabel() {
-    nameLabel.accessibilityIdentifier = "nameLabel"
+    nameLabel.accessibilityIdentifier = AccessibilityIdentifiers.Profile.nameLabel
     nameLabel.translatesAutoresizingMaskIntoConstraints = false
     nameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
     nameLabel.textColor = .ypWhiteIOS
@@ -110,7 +110,7 @@ final class ProfileViewController: UIViewController & ProfileViewProtocol {
   }
   
   private func configLoginLabel() {
-    loginLabel.accessibilityIdentifier = "username"
+    loginLabel.accessibilityIdentifier = AccessibilityIdentifiers.Profile.loginLabel
     loginLabel.translatesAutoresizingMaskIntoConstraints = false
     loginLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
     loginLabel.textColor = .ypGrayIOS
@@ -139,7 +139,7 @@ final class ProfileViewController: UIViewController & ProfileViewProtocol {
   }
   
   private func configExitButton() {
-    exitButton.accessibilityIdentifier = "logout button"
+    exitButton.accessibilityIdentifier = AccessibilityIdentifiers.Profile.exitButton
     exitButton.translatesAutoresizingMaskIntoConstraints = false
     exitButton.setImage(UIImage(named: "Exit"), for: .normal)
     exitButton.addTarget(self, action: #selector(didTapExitButton), for: .touchUpInside)

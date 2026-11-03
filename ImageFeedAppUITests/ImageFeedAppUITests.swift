@@ -5,7 +5,9 @@
 //  Created by Данил on 01/11/2026.
 //
 
+@testable import ImageFeedApp
 import XCTest
+
 
 final class ImageFeedAppUITests: XCTestCase {
   
@@ -19,9 +21,9 @@ final class ImageFeedAppUITests: XCTestCase {
   func testAuth() throws {
     let login = ""
     let password = ""
-    app.buttons["Authenticate"].tap()
+    app.buttons[AccessibilityIdentifiers.Auth.loginButton].tap()
     
-    let webView = app.webViews["UnsplashWebView"]
+    let webView = app.webViews[AccessibilityIdentifiers.WebView.webView]
     
     XCTAssertTrue(webView.waitForExistence(timeout: 10))
     
@@ -60,11 +62,11 @@ final class ImageFeedAppUITests: XCTestCase {
     
     sleep(5)
     
-    cellToLike.buttons["No Active button"].tap()
+    cellToLike.buttons[AccessibilityIdentifiers.ImageListCell.noActiveLikeButton].tap()
     
     sleep(5)
     
-    cellToLike.buttons["Active button"].tap()
+    cellToLike.buttons[AccessibilityIdentifiers.ImageListCell.activeLikeButton].tap()
     
     sleep(5)
     
@@ -76,7 +78,7 @@ final class ImageFeedAppUITests: XCTestCase {
     image.pinch(withScale: 3, velocity: 1)
     image.pinch(withScale: 0.5, velocity: -1)
     
-    let navBackButtonWhiteButton = app.buttons["back button"]
+    let navBackButtonWhiteButton = app.buttons[AccessibilityIdentifiers.SingleImageView.backButton]
     navBackButtonWhiteButton.tap()
   }
   
@@ -84,10 +86,10 @@ final class ImageFeedAppUITests: XCTestCase {
     sleep(10)
     app.tabBars.buttons.element(boundBy: 1).tap()
     
-    XCTAssertTrue(app.staticTexts["nameLabel"].exists)
-    XCTAssertTrue(app.staticTexts["username"].exists)
+    XCTAssertTrue(app.staticTexts[AccessibilityIdentifiers.Profile.nameLabel].exists)
+    XCTAssertTrue(app.staticTexts[AccessibilityIdentifiers.Profile.loginLabel].exists)
     
-    app.buttons["logout button"].tap()
+    app.buttons[AccessibilityIdentifiers.Profile.exitButton].tap()
     
     app.alerts["Пока, пока!"].scrollViews.otherElements.buttons["Да"].tap()
   }

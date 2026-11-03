@@ -44,7 +44,7 @@ final class ImagesListCell: UITableViewCell {
     super.prepareForReuse()
     dateLabel.text = ""
     likeButton.setImage(UIImage(named: "No Active"), for: .normal)
-    likeButton.accessibilityIdentifier = "No Active button"
+    likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.noActiveLikeButton
     cellImage.kf.cancelDownloadTask()
     cellImage.image = nil
     onImageLoadSuccess = nil
@@ -68,7 +68,12 @@ final class ImagesListCell: UITableViewCell {
   
   func setIsLike(with isLiked: Bool) {
     let likeImage = isLiked ? UIImage(named: "Active") : UIImage(named: "No Active")
-    likeButton.accessibilityIdentifier = isLiked ? "Active button" : "No Active button"
+    if isLiked {
+      likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.activeLikeButton
+    } else {
+      likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.noActiveLikeButton
+    }
+
     likeButton.setImage(likeImage, for: .normal)
   }
   

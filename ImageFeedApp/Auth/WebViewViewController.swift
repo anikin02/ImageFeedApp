@@ -69,7 +69,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   }
   
   private func configWebView() {
-    webView.accessibilityIdentifier = "UnsplashWebView" 
+    webView.accessibilityIdentifier = AccessibilityIdentifiers.WebView.webView
     webView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(webView)
     
